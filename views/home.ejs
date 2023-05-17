@@ -1,16 +1,15 @@
 <%- include("partials/header1"); -%>
 <div class="make">
     <h1><strong>Welcome <%= username %>!</strong></h1>
-   
+    <br/>
     <p style="font-size: 30px;">Welcome to your Blog! See what's happening arround in the community.</p>
-
-  <br>
-  <div class="text-center">
+    
+    <br>
+    <div class="text-center">
       <strong>Compose or see your posts:</strong>
       <a href="/compose"><button type="button" class="btn btn-success btn-lg">Compose</button></a>
       <a href="/posts"><button type="button" class="btn btn-info btn-lg">My Posts</button></a>
-</div>
-
+    </div>
     <h2>All Posts:</h2>
     <div class="space reverse">
         <%  array.forEach(function(post){ %>
@@ -21,7 +20,9 @@
               <div class="dte"><strong><%=post.date%></strong></div>
               <p class="card-text"><%= (post.post).substring(0,100) + " ..."%>
                 </p>
-                <div class="dte"><em>Posted by: <%=post.postedby%></em></div>
+                <div class="dte">
+                  <em>Posted by: <%=post.postedby%></em>
+                </div>
               <a href="/posts/<%=post._id%>" class="btn btn-primary">Read More</a>
             </div>
           </div>

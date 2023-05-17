@@ -18,7 +18,6 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-
 app.use(session({
   secret: "Our little secret.",
   resave: false,
@@ -71,31 +70,36 @@ passport.deserializeUser(function(id, done) {
 
 
 app.get("/", function(req, res){
-  res.render("start");
+  const loggedIn = req.isAuthenticated();
+  res.render("start",{ loggedIn: loggedIn });
 });
 
 app.get("/login", function(req, res){
-  res.render("login");
+  const loggedIn = req.isAuthenticated();
+  res.render("login",{loggedIn:loggedIn});
 });
 
 app.get("/register", function(req, res){
-  res.render("register");
+  const loggedIn = req.isAuthenticated();
+  res.render("register",{loggedIn:loggedIn});
 });
 
 app.get("/pass", function(req, res){
-  res.render("pass");
+  const loggedIn = req.isAuthenticated();
+  res.render("pass",{loggedIn:loggedIn});
 });
 
 app.get("/user", function(req, res){
-  res.render("user");
+  const loggedIn = req.isAuthenticated();
+  res.render("user",{loggedIn});
 });
 
 app.get("/home", function(req, res){
-
-  if(req.isAuthenticated()){
+  const loggedIn = req.isAuthenticated();
+  if(loggedIn){
     Post.find({}, function(err, posts){
       if(!err){
-        res.render("home",{username:req.user.username,array:posts});
+        res.render("home",{username:req.user.username,array:posts,loggedIn:loggedIn});
       }
     });
   }else{
@@ -145,21 +149,25 @@ app.post("/pass",function(req,res){
 //main app
 
 app.get("/posts",function(req,res){
+  const loggedIn = req.isAuthenticated();
   Post.find({postedbyid:req.user._id}, function(err, posts){
     if(!err){
-      res.render("posts",{array:posts});
+      res.render("posts",{array:posts,loggedIn:loggedIn});
     }
   });
 });
 
 app.get("/gstart",function(req,res){
-  res.render("gstart");
+  const loggedIn = req.isAuthenticated();
+  res.render("gstart",{loggedIn:loggedIn});
 });
 app.get("/about",function(req,res){
-  res.render("about");
+  const loggedIn = req.isAuthenticated();
+  res.render("about",{loggedIn:loggedIn});
 });
 app.get("/compose",function(req,res){
-  res.render("compose")
+  const loggedIn = req.isAuthenticated();
+  res.render("compose",{loggedIn:loggedIn})
   // console.log(req.user.username);
 });
 // Composing new posts
@@ -179,22 +187,25 @@ app.post("/compose",function(req,res){
   });
   });
 
-app.get("/posts/:pos",function(req,res){
-  
+app.get("/posts/:pos", function(req,res){
+  const loggedIn = req.isAuthenticated();
   const ur =req.params.pos;//prining the post from url
+  // console.log(ur);
   Post.findOne({_id:ur}, function(err, post){
+    if (err) console.log(err);
     if(!err){
-      res.render("post",{array2:post});
+      res.render("post",{array2:post,loggedIn:loggedIn});
+      return;
     }
   });
 });
 // Deleting posts
 app.post("/delete",function(req,res){
   const delpost=req.body.perm;
-  console.log(delpost);
-  Post.findOneAndDelete({postedbyid:req.user._id,_id:delpost},function(err,delist){
+  // console.log(delpost);
+  Post.findOneAndDelete({postedbyid:req.user._id,_id:delpost}, function(err,delist){
     if(!err){
-      console.log("Post Deleted");
+      // console.log("Post Deleted");
       res.redirect("/home");
     }
   });

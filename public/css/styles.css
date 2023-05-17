@@ -7,7 +7,7 @@ body{
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(10px);
 }
 .centered {
   text-align: center;
@@ -17,7 +17,7 @@ body{
   transform: translate(-50%, -50%);
 }
 .position{
-  padding-top: 100px;
+  padding-top: 150px;
 }
 
 .container-fluid {
