@@ -17,9 +17,11 @@ body{
   transform: translate(-50%, -50%);
 }
 .position{
-  padding-top: 150px;
+  padding-top: 10vh;
 }
-
+.middle{
+  vertical-align: middle;
+}
 .container-fluid {
   padding-top: 70px;
   padding-bottom: 70px;
@@ -27,7 +29,7 @@ body{
 .navbar {
   border: 0;
   border-radius: 0;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
   font-size: 20px;
 }
 .navbar-nav  li a:hover {
@@ -36,14 +38,11 @@ body{
 div.make{
   width: 80%;
   margin: auto;
-  padding-top: 100px;
   text-align: justify;
   overflow: auto;
-  margin-bottom: 5%; 
 }
 .make>p{
   font-size: large;
-  padding: 15px;
   font-weight: 500;
 }
 .make>h1{
@@ -67,31 +66,14 @@ div.text-center{
   display: flex;
   flex-direction: column-reverse;
 }
-.footer-padding {
-padding-bottom: 60px;
-}
+
 #page-container {
   position: relative;
-  min-height: 100vh;
+  min-height: 85vh;
 }
 
 #content-wrap {
   padding-bottom: 2.5rem;    /* Footer height */
-}
-.footer {
-position: absolute;
-text-align: center;
-bottom: 0;
-left: 0;
-width: 100%;
-height: 60px;
-background-color:rgba(225, 186, 78, 0.833);
-}
-
-.footer p {
-margin-top: 20px;
-font-size: 12px;
-color: #000;
 }
 
 div.dte{

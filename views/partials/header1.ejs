@@ -4,12 +4,12 @@
 <head>
   <meta charset="utf-8">
   <title>Daily Blog</title>
-  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="icon" type="image/png" href="/favicon.ico">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script defer src="https://use.fontawesome.com/releases/v6.1.1/js/all.js"></script>
   <link rel="stylesheet" href="/css/styles.css">
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="/home"><img src="/logo.png" style="height: 40px; width: 40px; border-radius: 50%;"> DAILY BLOG</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,14 +32,29 @@
                       <li><a class="dropdown-item" href="sms:+918826785196"><i class="fa-solid fa-message"></i> Message</a></li>
                     </ul>
                   </li>
-                <li class="nav-item">
+                
                   <% if (loggedIn) { %>
-                    <a class="nav-link" href="/logout"><button type="button" class="btn btn-danger">Log Out</button></a>
-                  <% } else { %>
-                    <a class="nav-link" href="/logout"><button type="button" class="btn btn-success">Home</button></a>
-                  <% } %>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle position-static" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-user" style="color: #ffffff;"></i>
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarDropdown" style="position: absolute;">
+
+                        <li><a class="dropdown-item" href="/compose">Compose</a></li>
+                        <li><a class="dropdown-item" href="/posts">My Posts</a></li>
+                        <li><a class="dropdown-item" href="/home">All Posts</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="nav-link" href="/logout"><button type="button" class="btn btn-danger btn-sm w-100">Log Out</button></a></li>
+
+                      </ul>
+                      
+                    </li>
                     <!-- <a class="nav-link" href="/logout"><button type="button" class="btn btn-danger">Log Out</button></a> -->
-                </li>
+                  <% } else { %>
+                    <li class="nav-item">
+                    <a class="nav-link" href="/"><button type="button" class="btn btn-success">Home</button></a>
+                    </li>
+                  <% } %>
               </ul>
         </div>
     </div>

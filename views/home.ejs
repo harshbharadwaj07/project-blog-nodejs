@@ -5,12 +5,22 @@
     <p style="font-size: 30px;">Welcome to your Daily Blog! See what's happening arround in the community.</p>
     
     <br>
-    <div class="text-center">
-      <strong>Compose or see your posts:</strong>
+    <!-- <div class="text-center">
+      <strong>Compose or see posts:</strong>
       <a href="/compose"><button type="button" class="btn btn-success btn-lg">Compose</button></a>
       <a href="/posts"><button type="button" class="btn btn-info btn-lg">My Posts</button></a>
+      <a href="/home"><button type="button" class="btn btn-secondary btn-lg">All Posts</button></a>
+    </div> -->
+    <div class="text-center" style="width:75%; margin:auto;">
+      <form action="/search" method="post">
+        <div class = "input-group">
+        <input type="text" class="input-group-field form-control" name="searchString" placeholder="Search posts" style="border-radius: 10px;" autocomplete="off">
+        <button type="submit" class="input-group-button btn btn-warning btn-lg">Search</button>
+        </div>
+      </form>
     </div>
-    <h2>All Posts:</h2>
+    <br>
+    <h2><%= type %> Posts:</h2>
     <div class="space reverse">
         <%  array.forEach(function(post){ %>
 

@@ -99,7 +99,7 @@ app.get("/home", function(req, res){
   if(loggedIn){
     Post.find({}, function(err, posts){
       if(!err){
-        res.render("home",{username:req.user.username,array:posts,loggedIn:loggedIn});
+        res.render("home",{username:req.user.username,type:"All",array:posts,loggedIn:loggedIn});
       }
     });
   }else{
@@ -230,6 +230,21 @@ app.post("/comment",function(req,res){
     });
   });
 
+// Searching post
+app.post("/search",async function(req,res){
+  // const str=req.body.searchString;
+  const loggedIn = req.isAuthenticated();
+  if(loggedIn){
+    const str=req.body.searchString?{
+      $or:[
+        {title:{$regex:req.body.searchString, $options:"i"}},
+        {post:{$regex:req.body.searchString, $options:"i"}}
+      ]
+    }:{};
+    const result=await Post.find(str);
+    res.render("home",{username:req.user.username,type:"Searched",array:result,loggedIn:loggedIn});
+  }
+})
 
 let port = process.env.PORT;
 if (port == null || port == "") {
