@@ -157,10 +157,6 @@ app.get("/posts",function(req,res){
   });
 });
 
-app.get("/gstart",function(req,res){
-  const loggedIn = req.isAuthenticated();
-  res.render("gstart",{loggedIn:loggedIn});
-});
 app.get("/about",function(req,res){
   const loggedIn = req.isAuthenticated();
   res.render("about",{loggedIn:loggedIn});
