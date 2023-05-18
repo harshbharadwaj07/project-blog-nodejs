@@ -84,16 +84,6 @@ app.get("/register", function(req, res){
   res.render("register",{loggedIn:loggedIn});
 });
 
-app.get("/pass", function(req, res){
-  const loggedIn = req.isAuthenticated();
-  res.render("pass",{loggedIn:loggedIn});
-});
-
-app.get("/user", function(req, res){
-  const loggedIn = req.isAuthenticated();
-  res.render("user",{loggedIn});
-});
-
 app.get("/home", function(req, res){
   const loggedIn = req.isAuthenticated();
   if(loggedIn){
@@ -105,7 +95,6 @@ app.get("/home", function(req, res){
   }else{
     res.redirect("/login");
   }
-
 });
 
 app.get("/logout", function(req, res){
@@ -116,11 +105,11 @@ app.get("/logout", function(req, res){
 });
 
 app.post("/register", function(req, res){
-
+  const loggedIn=req.isAuthenticated();
   User.register({username: req.body.username}, req.body.password, function(err, user){
     if (err) {
       console.log(err);
-      res.redirect("/user");
+      res.render("register",{loggedIn:loggedIn,error:"Username already taken"});
     } else {
       passport.authenticate("local")(req, res, function(){
         res.redirect("/login");
@@ -130,17 +119,21 @@ app.post("/register", function(req, res){
 
 });
 
-app.post('/login', 
-  passport.authenticate('local', { failureRedirect: '/pass' }),
-  function(req, res) {
-    res.redirect('/home');
-  });
-
-app.post("/user",function(req,res){
-  res.redirect("/register");
-});
-app.post("/pass",function(req,res){
-  res.redirect("/login");
+app.post('/login', (req, res, next) => {
+  const loggedIn=req.isAuthenticated();
+  passport.authenticate('local', (err, user, info) => {
+    if (err || !user) {
+      // Authentication failed, render the login page
+      return res.render('login',{loggedIn:loggedIn,error:"Wrong username or password"});
+    }
+    // Authentication successful, redirect to the home page
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect('/home');
+    });
+  })(req, res, next);
 });
 
 
@@ -150,11 +143,13 @@ app.post("/pass",function(req,res){
 
 app.get("/posts",function(req,res){
   const loggedIn = req.isAuthenticated();
-  Post.find({postedbyid:req.user._id}, function(err, posts){
-    if(!err){
-      res.render("posts",{array:posts,loggedIn:loggedIn});
-    }
-  });
+  if(loggedIn){
+    Post.find({postedbyid:req.user._id}, function(err, posts){
+      if(!err){
+        res.render("posts",{array:posts,loggedIn:loggedIn});
+      }
+    });
+  }else res.redirect('/login');
 });
 
 app.get("/about",function(req,res){
@@ -163,8 +158,9 @@ app.get("/about",function(req,res){
 });
 app.get("/compose",function(req,res){
   const loggedIn = req.isAuthenticated();
-  res.render("compose",{loggedIn:loggedIn})
-  // console.log(req.user.username);
+  if(loggedIn){
+    res.render("compose",{loggedIn:loggedIn});
+  }else res.redirect("/login");
 });
 // Composing new posts
 app.post("/compose",function(req,res){
@@ -185,15 +181,17 @@ app.post("/compose",function(req,res){
 
 app.get("/posts/:pos", function(req,res){
   const loggedIn = req.isAuthenticated();
-  const ur =req.params.pos;//prining the post from url
-  // console.log(ur);
-  Post.findOne({_id:ur}, function(err, post){
-    if (err) console.log(err);
-    if(!err){
-      res.render("post",{array2:post,loggedIn:loggedIn});
-      return;
-    }
-  });
+  if(loggedIn){
+    const ur =req.params.pos;//prining the post from url
+    // console.log(ur);
+    Post.findOne({_id:ur}, function(err, post){
+      if (err) console.log(err);
+      if(!err){
+        res.render("post",{array2:post,loggedIn:loggedIn});
+        return;
+      }
+    });
+  }else res.redirect("/login");
 });
 // Deleting posts
 app.post("/delete",function(req,res){
@@ -241,6 +239,15 @@ app.post("/search",async function(req,res){
     res.render("home",{username:req.user.username,type:"Searched",array:result,loggedIn:loggedIn});
   }
 })
+
+app.use(function(err, req, res, next) {
+  if (err instanceof NotFound) {
+    res.send('404.jade');
+  } else {
+    next(err);
+  }
+});
+
 
 let port = process.env.PORT;
 if (port == null || port == "") {
