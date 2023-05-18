@@ -1,7 +1,7 @@
 {
-  "name": "onlineblog",
+  "name": "dailyblog",
   "version": "1.0.0",
-  "description": "Online blog designed using Node.js, Express and MongoDB",
+  "description": "Daily Blog designed using Node.js, Express and MongoDB",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",

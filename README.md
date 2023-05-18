@@ -4,23 +4,26 @@ A blog website designed using node.js, express.js and mongodb.
 ## User has functionality to:
 
 (i) see posts from the members of the community; 
-(ii) compose desired posts; 
-(iii) comment to the posts made by a user in the community; 
-(iv) view their posts; and 
-(iv) delete their post.
+(ii) search posts; 
+(iii) compose desired posts; 
+(iv) comment to the posts made by a user in the community; 
+(v) view their posts; and 
+(vi) delete their post.
 
 ## Using the web-app:
 
 (i) Community Posts: Users can see posts by the members of the community on the 'Home' page.
 
-(ii) Composing Posts: Users can compose their desired posts by using the 'Compose' button on the 'Home' page and submitting the desired title and content from the 'Compose' page.
+(ii) Searching Posts: Users can search any post using keywords for related topic.
 
-(iii) Comments: Users can write comments to the posts made by a user in the community.
+(iii) Composing Posts: Users can compose their desired posts by using the 'Compose' button on the 'Home' page and submitting the desired title and content from the 'Compose' page.
 
-(iv) My Posts: Users can view their posts by clicking the 'My Posts' button on the home page.
+(iv) Comments: Users can write comments to the posts made by a user in the community.
 
-(v) Deleting Posts: Users can delete their post(s) by clicking the 'Delete' button in the 'My Posts' section.
+(v) My Posts: Users can view their posts by clicking the 'My Posts' button on the home page.
 
-In future, I plan including liking, searching and rating posts.
+(vi) Deleting Posts: Users can delete their post(s) by clicking the 'Delete' button in the 'My Posts' section.
 
-This web app can be accessed at: https://blognode-deploy.herokuapp.com/
+In future, I plan including features such as filter searching, liking, replying and rating posts.
+
+This web app can be accessed at: 
