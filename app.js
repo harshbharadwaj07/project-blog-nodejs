@@ -238,14 +238,6 @@ app.post("/search",async function(req,res){
     const result=await Post.find(str);
     res.render("home",{username:req.user.username,type:"Searched",array:result,loggedIn:loggedIn});
   }
-})
-
-app.use(function(err, req, res, next) {
-  if (err instanceof NotFound) {
-    res.send('404.jade');
-  } else {
-    next(err);
-  }
 });
 
 
