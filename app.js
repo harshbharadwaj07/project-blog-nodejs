@@ -69,6 +69,13 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+}
+
 
 app.get("/", function(req, res){
   const loggedIn = req.isAuthenticated();
@@ -85,17 +92,13 @@ app.get("/register", function(req, res){
   res.render("register",{loggedIn:loggedIn});
 });
 
-app.get("/home", function(req, res){
+app.get("/home", ensureAuthenticated, function(req, res){
   const loggedIn = req.isAuthenticated();
-  if(loggedIn){
     Post.find({}, function(err, posts){
       if(!err){
         res.render("home",{username:req.user.username,type:"All",array:posts,loggedIn:loggedIn});
       }
     });
-  }else{
-    res.redirect("/login");
-  }
 });
 
 app.get("/logout", function(req, res){
@@ -142,29 +145,25 @@ app.post('/login', (req, res, next) => {
 
 //main app
 
-app.get("/posts",function(req,res){
+app.get("/posts",ensureAuthenticated,function(req,res){
   const loggedIn = req.isAuthenticated();
-  if(loggedIn){
     Post.find({postedbyid:req.user._id}, function(err, posts){
       if(!err){
         res.render("posts",{array:posts,loggedIn:loggedIn});
       }
     });
-  }else res.redirect('/login');
 });
 
 app.get("/about",function(req,res){
   const loggedIn = req.isAuthenticated();
   res.render("about",{loggedIn:loggedIn});
 });
-app.get("/compose",function(req,res){
+app.get("/compose",ensureAuthenticated,function(req,res){
   const loggedIn = req.isAuthenticated();
-  if(loggedIn){
     res.render("compose",{loggedIn:loggedIn});
-  }else res.redirect("/login");
 });
 // Composing new posts
-app.post("/compose",function(req,res){
+app.post("/compose",ensureAuthenticated,function(req,res){
   const post=new Post({
     title:req.body.postTitle,
     post:req.body.postBody,
@@ -180,9 +179,8 @@ app.post("/compose",function(req,res){
   });
   });
 
-app.get("/posts/:pos", function(req,res){
+app.get("/posts/:pos", ensureAuthenticated, function(req,res){
   const loggedIn = req.isAuthenticated();
-  if(loggedIn){
     const ur =req.params.pos;//prining the post from url
     // console.log(ur);
     Post.findOne({_id:ur}, function(err, post){
@@ -192,10 +190,9 @@ app.get("/posts/:pos", function(req,res){
         return;
       }
     });
-  }else res.redirect("/login");
 });
 // Deleting posts
-app.post("/delete",function(req,res){
+app.post("/delete",ensureAuthenticated,function(req,res){
   const delpost=req.body.perm;
   // console.log(delpost);
   Post.findOneAndDelete({postedbyid:req.user._id,_id:delpost}, function(err,delist){
@@ -206,7 +203,7 @@ app.post("/delete",function(req,res){
   });
 });
 // Writing comments
-app.post("/comment",function(req,res){
+app.post("/comment",ensureAuthenticated,function(req,res){
   const comment=req.body.comment;
   const commentby=req.user.username;
   const postid=req.body.pid;
@@ -226,10 +223,9 @@ app.post("/comment",function(req,res){
   });
 
 // Searching post
-app.post("/search",async function(req,res){
+app.post("/search",ensureAuthenticated,async function(req,res){
   // const str=req.body.searchString;
   const loggedIn = req.isAuthenticated();
-  if(loggedIn){
     const str=req.body.searchString?{
       $or:[
         {title:{$regex:req.body.searchString, $options:"i"}},
@@ -238,7 +234,6 @@ app.post("/search",async function(req,res){
     }:{};
     const result=await Post.find(str);
     res.render("home",{username:req.user.username,type:"Searched",array:result,loggedIn:loggedIn});
-  }
 });
 
 
