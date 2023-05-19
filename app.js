@@ -70,9 +70,23 @@ passport.deserializeUser(function(id, done) {
 });
 
 function ensureAuthenticated(req, res, next) {
+  // if (req.isAuthenticated()) {
+  //   return next();
+  // }
+  // res.redirect("/login");
+  const nonAuthenticatedRoutes = ["/", "/login", "/register"];
+
+  // Check if the requested route is in the nonAuthenticatedRoutes list
+  if (nonAuthenticatedRoutes.includes(req.path)) {
+    return next();
+  }
+
+  // Check if the user is authenticated
   if (req.isAuthenticated()) {
     return next();
   }
+
+  // User is not authenticated, redirect to the login page
   res.redirect("/login");
 }
 
