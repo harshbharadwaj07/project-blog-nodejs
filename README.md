@@ -26,4 +26,4 @@ A blog website designed using node.js, express.js and mongodb.
 
 In future, I plan including features such as filter searching, liking, replying and rating posts.
 
-This web app can be accessed at: 
+This web app can be accessed at: https://daily-blog-mocha.vercel.app
