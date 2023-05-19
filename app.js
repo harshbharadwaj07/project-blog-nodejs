@@ -3,8 +3,9 @@ require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-const mongoose = require("mongoose");
 const session = require('express-session');
+const MongoDBStore = require("connect-mongodb-session")(session);
+const mongoose = require("mongoose");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const findOrCreate = require('mongoose-findorcreate');
@@ -19,16 +20,42 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
+
+// Connect to MongoDB database
+mongoose.connect("mongodb+srv://admin-harsh:"+process.env.MONGO_KEY+"@cluster0.pqd8uax.mongodb.net/userDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+// Create a new MongoDBStore instance
+const store = new MongoDBStore({
+  uri: "mongodb+srv://admin-harsh:"+process.env.MONGO_KEY+"@cluster0.pqd8uax.mongodb.net/userDB",
+  collection: "sessions", // Collection to store sessions
+  expires: 1800000
+});
+
+// Catch MongoDB connection errors
+store.on("error", function (error) {
+  console.log("Session store error:", error);
+});
+
+
+
 app.use(session({
   secret: "Our little secret.",
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: store,
+  cookie:{
+    maxAge:1800000
+  }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb+srv://admin-harsh:"+process.env.MONGO_KEY+"@cluster0.pqd8uax.mongodb.net/userDB");
+// mongoose.connect("mongodb+srv://admin-harsh:"+process.env.MONGO_KEY+"@cluster0.pqd8uax.mongodb.net/userDB");
 
 const postSchema=new mongoose.Schema({
   title:String,
@@ -70,23 +97,9 @@ passport.deserializeUser(function(id, done) {
 });
 
 function ensureAuthenticated(req, res, next) {
-  // if (req.isAuthenticated()) {
-  //   return next();
-  // }
-  // res.redirect("/login");
-  const nonAuthenticatedRoutes = ["/", "/login", "/register"];
-
-  // Check if the requested route is in the nonAuthenticatedRoutes list
-  if (nonAuthenticatedRoutes.includes(req.path)) {
-    return next();
-  }
-
-  // Check if the user is authenticated
   if (req.isAuthenticated()) {
     return next();
   }
-
-  // User is not authenticated, redirect to the login page
   res.redirect("/login");
 }
 
@@ -160,12 +173,6 @@ app.post('/login', (req, res, next) => {
 //main app
 
 app.get("/posts",ensureAuthenticated,async function(req,res){
-  // const loggedIn = req.isAuthenticated();
-  //   await Post.find({postedbyid:req.user._id}, function(err, posts){
-  //     if(!err){
-  //       res.render("posts",{array:posts,loggedIn:loggedIn});
-  //     }
-  //   });
   try {
     const loggedIn = req.isAuthenticated();
     const posts = await Post.find({ postedbyid: req.user._id });
