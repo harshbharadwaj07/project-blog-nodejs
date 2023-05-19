@@ -145,13 +145,21 @@ app.post('/login', (req, res, next) => {
 
 //main app
 
-app.get("/posts",ensureAuthenticated,function(req,res){
-  const loggedIn = req.isAuthenticated();
-    Post.find({postedbyid:req.user._id}, function(err, posts){
-      if(!err){
-        res.render("posts",{array:posts,loggedIn:loggedIn});
-      }
-    });
+app.get("/posts",ensureAuthenticated,async function(req,res){
+  // const loggedIn = req.isAuthenticated();
+  //   await Post.find({postedbyid:req.user._id}, function(err, posts){
+  //     if(!err){
+  //       res.render("posts",{array:posts,loggedIn:loggedIn});
+  //     }
+  //   });
+  try {
+    const loggedIn = req.isAuthenticated();
+    const posts = await Post.find({ postedbyid: req.user._id });
+    res.render("posts", { array: posts, loggedIn: loggedIn });
+  } catch (err) {
+    // Handle the error appropriately
+    console.error(err);
+  }
 });
 
 app.get("/about",function(req,res){
@@ -163,7 +171,7 @@ app.get("/compose",ensureAuthenticated,function(req,res){
     res.render("compose",{loggedIn:loggedIn});
 });
 // Composing new posts
-app.post("/compose",ensureAuthenticated,function(req,res){
+app.post("/compose",ensureAuthenticated,async function(req,res){
   const post=new Post({
     title:req.body.postTitle,
     post:req.body.postBody,
@@ -172,38 +180,45 @@ app.post("/compose",ensureAuthenticated,function(req,res){
   });
   // let text=req.body.postBody;
   // console.log(post);
-  post.save(function(err){
+  await post.save(function(err){
     if (!err){
       res.redirect("/home");
     }
   });
   });
 
-app.get("/posts/:pos", ensureAuthenticated, function(req,res){
-  const loggedIn = req.isAuthenticated();
-    const ur =req.params.pos;//prining the post from url
-    // console.log(ur);
-    Post.findOne({_id:ur}, function(err, post){
-      if (err) console.log(err);
-      if(!err){
-        res.render("post",{array2:post,loggedIn:loggedIn});
-        return;
+  app.get("/posts/:pos", ensureAuthenticated, async function(req, res) {
+    try {
+      const loggedIn = req.isAuthenticated();
+      const postId = req.params.pos; // retrieving the post ID from the URL
+      const post = await Post.findOne({ _id: postId });
+      if (post) {
+        res.render("post", { array2: post, loggedIn: loggedIn });
+      } else {
+        res.render("error", { page_name: "Error 404",loggedIn:loggedIn });
       }
-    });
-});
-// Deleting posts
-app.post("/delete",ensureAuthenticated,function(req,res){
-  const delpost=req.body.perm;
-  // console.log(delpost);
-  Post.findOneAndDelete({postedbyid:req.user._id,_id:delpost}, function(err,delist){
-    if(!err){
-      // console.log("Post Deleted");
-      res.redirect("/home");
+    } catch (err) {
+      // Handle the error appropriately
+      console.error(err);
     }
   });
+  
+// Deleting posts
+app.post("/delete", ensureAuthenticated, async function(req, res) {
+  try {
+    const delpost = req.body.perm;
+    await Post.findOneAndDelete({ postedbyid: req.user._id, _id: delpost });
+    // Post deleted successfully
+    res.redirect("/home");
+  } catch (err) {
+    // Handle the error appropriately
+    console.error(err);
+  }
 });
+
 // Writing comments
-app.post("/comment",ensureAuthenticated,function(req,res){
+app.post("/comment",ensureAuthenticated,async function(req,res){
+  try{
   const comment=req.body.comment;
   const commentby=req.user.username;
   const postid=req.body.pid;
@@ -212,14 +227,20 @@ app.post("/comment",ensureAuthenticated,function(req,res){
       commentby:commentby
   }
   // console.log(comment);
-  Post.findOne({_id:postid}, function(err,repli){
-      if(!err){
-        repli.comments.push(repl);
-        repli.save();
-        // console.log("Comment added");
-        res.redirect("/posts/"+postid);
-      }
-    });
+  const post=await Post.findOne({_id:postid});
+  if (post) {
+    post.comments.push(repl);
+    await post.save();
+    // Comment added successfully
+    res.redirect("/posts/" + postid);
+  } else {
+    // Post not found
+    res.render("error", { page_name: "Error 404",loggedIn:loggedIn })
+  }
+  } catch (err) {
+  // Handle the error appropriately
+  console.error(err);
+  }
   });
 
 // Searching post
@@ -234,6 +255,11 @@ app.post("/search",ensureAuthenticated,async function(req,res){
     }:{};
     const result=await Post.find(str);
     res.render("home",{username:req.user.username,type:"Searched",array:result,loggedIn:loggedIn});
+});
+
+app.use(function(req, res, next) {
+  const loggedIn=req.isAuthenticated();
+  res.render("error", { page_name: "Error 404",loggedIn:loggedIn });
 });
 
 
