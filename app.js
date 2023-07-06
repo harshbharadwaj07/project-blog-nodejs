@@ -10,7 +10,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const findOrCreate = require('mongoose-findorcreate');
 const path=require("path");
-
+const moment=require("moment-timezone");
 
 const app = express();
 app.set('views', path.join(__dirname, 'views'));
@@ -176,7 +176,12 @@ app.get("/posts",ensureAuthenticated,async function(req,res){
   try {
     const loggedIn = req.isAuthenticated();
     const posts = await Post.find({ postedbyid: req.user._id });
-    res.render("posts", { array: posts, loggedIn: loggedIn });
+    // Convert the date to IST time zone
+    const postsWithISTDate = posts.map(post => {
+      const istDate = moment(post.date).tz('Asia/Kolkata').format();
+      return { ...post.toObject(), date: istDate };
+    });
+    res.render("posts", { array: posts, date:postsWithISTDate, loggedIn: loggedIn });
   } catch (err) {
     // Handle the error appropriately
     console.error(err);
@@ -284,12 +289,12 @@ app.use(function(req, res, next) {
 });
 
 
-let port = process.env.PORT;
-if (port == null || port == "") {
-  port = 4000;
+let PORT = process.env.PORT;
+if (PORT == null || PORT == "") {
+  PORT = 4000;
 }
 
 
-app.listen(port, function() {
-  console.log("Server has started on port 4000.");
+app.listen(PORT, function() {
+  console.log(`Server has started on port ${PORT}.`);
 });

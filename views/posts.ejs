@@ -9,10 +9,10 @@
               <form action="/delete" method="post">
               <h2 class="card-title"><%=post.title%></h2>
                     <button type="submit" class="btn btn-danger" style="position:absolute; right: 40px; top: 20px;" name="perm" value="<%=post._id%>">Delete</button></h2>
-                  
                 </form>
+                
               </h2>
-              <div class="dte"><strong><%=post.date%></strong></div>
+              <div class="dte"><strong><%=date%></strong></div>
               <p class="card-text"><%= (post.post).substring(0,100) + " ..."%>
                 </p>
               <a href="/posts/<%=post._id%>" class="btn btn-primary">Read More</a>
