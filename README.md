@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Blog
 A blog website designed using node.js, express.js and mongodb.
 

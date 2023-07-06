@@ -188,7 +188,7 @@ app.get("/posts",ensureAuthenticated,async function(req,res){
       const istDate = moment(post.date).tz('Asia/Kolkata').format();
       return { ...post.toObject(), date: istDate };
     });
-    res.render("posts", { array: posts, date:postsWithISTDate, loggedIn: loggedIn });
+    res.render("posts", { array: postsWithISTDate, loggedIn: loggedIn });
   } catch (err) {
     // Handle the error appropriately
     console.error(err);
