@@ -28,6 +28,16 @@ mongoose.connect("mongodb+srv://admin-harsh:"+process.env.MONGO_KEY+"@cluster0.p
   useUnifiedTopology: true,
 });
 
+// Successful connection
+mongoose.connection.on('connected', () => {
+  console.log('Successfully connected to the database');
+});
+
+// Connection error
+mongoose.connection.on('error', (err) => {
+  console.error('Failed to connect to the database:', err);
+});
+
 // Create a new MongoDBStore instance
 const store = new MongoDBStore({
   uri: "mongodb+srv://admin-harsh:"+process.env.MONGO_KEY+"@cluster0.pqd8uax.mongodb.net/userDB",
@@ -39,7 +49,6 @@ const store = new MongoDBStore({
 store.on("error", function (error) {
   console.log("Session store error:", error);
 });
-
 
 
 app.use(session({
@@ -54,18 +63,6 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-mongoose.connect("mongodb+srv://admin-harsh:"+process.env.MONGO_KEY+"@cluster0.pqd8uax.mongodb.net/userDB");
-
-// Successful connection
-mongoose.connection.on('connected', () => {
-  console.log('Successfully connected to the database');
-});
-
-// Connection error
-mongoose.connection.on('error', (err) => {
-  console.error('Failed to connect to the database:', err);
-});
 
 const postSchema=new mongoose.Schema({
   title:String,
