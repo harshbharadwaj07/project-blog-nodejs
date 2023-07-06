@@ -55,7 +55,17 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// mongoose.connect("mongodb+srv://admin-harsh:"+process.env.MONGO_KEY+"@cluster0.pqd8uax.mongodb.net/userDB");
+mongoose.connect("mongodb+srv://admin-harsh:"+process.env.MONGO_KEY+"@cluster0.pqd8uax.mongodb.net/userDB");
+
+// Successful connection
+mongoose.connection.on('connected', () => {
+  console.log('Successfully connected to the database');
+});
+
+// Connection error
+mongoose.connection.on('error', (err) => {
+  console.error('Failed to connect to the database:', err);
+});
 
 const postSchema=new mongoose.Schema({
   title:String,
