@@ -186,7 +186,7 @@ app.get("/posts",ensureAuthenticated,async function(req,res){
     // Convert the date to IST time zone
     const postsWithISTDate = posts.map(post => {
       const istDate = moment(post.date).tz('Asia/Kolkata').format();
-      return { ...post.toObject(), date: istDate };
+      return { ...post.toObject(), istDate: istDate };
     });
     res.render("posts", { array: postsWithISTDate, loggedIn: loggedIn });
   } catch (err) {
